@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Login from './Login';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/Dashboard';
@@ -15,13 +16,34 @@ import Feedbacks from './pages/Feedbacks';
 import Reviews from './pages/Reviews';
 import Coupons from './pages/Coupons';
 import ShippingSettings from './pages/ShippingSettings';
+import SocialSettings from './pages/SocialSettings';
 import Profile from './pages/Profile';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          className: 'backdrop-blur-xl bg-white/90 border border-slate-100 shadow-2xl',
+          style: {
+            padding: '16px 24px',
+            color: '#1e293b',
+            borderRadius: '9999px',
+            fontWeight: '700',
+            fontSize: '15px',
+          },
+          success: {
+            iconTheme: { primary: '#10b981', secondary: '#fff' },
+          },
+          error: {
+            iconTheme: { primary: '#ef4444', secondary: '#fff' },
+          },
+        }}
+      />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
         {/* Admin Dashboard Routes wrapped in generic Layout */}
         <Route path="/" element={<AdminLayout />}>
@@ -38,12 +60,14 @@ function App() {
           <Route path="reviews" element={<Reviews />} />
           <Route path="coupons" element={<Coupons />} />
           <Route path="shipping" element={<ShippingSettings />} />
+          <Route path="social" element={<SocialSettings />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 
         <Route path="*" element={<div className="flex h-screen items-center justify-center font-bold text-gray-500">404 - Not Found. Path: {window.location.pathname}</div>} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 
