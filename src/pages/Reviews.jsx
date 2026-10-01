@@ -5,21 +5,36 @@ const Reviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const loadReviews = async () => {
-            try {
-                const response = await fetchAPI('/reviews');
-                if (response.success) {
-                    setReviews(response.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch reviews", error);
-            } finally {
-                setLoading(false);
+    const loadReviews = async () => {
+        try {
+            const response = await fetchAPI('/reviews');
+            if (response.success) {
+                setReviews(response.data);
             }
-        };
+        } catch (error) {
+            console.error("Failed to fetch reviews", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         loadReviews();
     }, []);
+
+    const handleStatusChange = async (id, status) => {
+        try {
+            const response = await fetchAPI(`/reviews/${id}/status`, {
+                method: 'PUT',
+                body: JSON.stringify({ status })
+            });
+            if (response.success) {
+                loadReviews();
+            }
+        } catch (error) {
+            console.error(`Failed to update review status to ${status}`, error);
+        }
+    };
 
     const renderStars = (rating) => {
         return Array.from({ length: 5 }).map((_, i) => (
@@ -81,10 +96,17 @@ const Reviews = () => {
                                                     {rev.status}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-6 text-right whitespace-nowrap">
-                                                <button className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors mr-2">
-                                                    Moderate
-                                                </button>
+                                            <td className="py-4 px-6 text-right whitespace-nowrap flex justify-end gap-2">
+                                                {rev.status !== 'Approved' && (
+                                                    <button onClick={() => handleStatusChange(rev._id, 'Approved')} className="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
+                                                        Approve
+                                                    </button>
+                                                )}
+                                                {rev.status !== 'Rejected' && (
+                                                    <button onClick={() => handleStatusChange(rev._id, 'Rejected')} className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
+                                                        Reject
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     );
