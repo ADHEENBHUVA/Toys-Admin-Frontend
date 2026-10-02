@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchAPI } from '../utils/api';
+import toast from 'react-hot-toast';
 
 const Customers = () => {
     const [customers, setCustomers] = useState([]);
@@ -46,12 +47,13 @@ const Customers = () => {
                 setIsModalOpen(false);
                 setFormData({ firstName: '', lastName: '', email: '', phone: '', accountStatus: 'Active' });
                 loadCustomers();
+                toast.success('Customer created successfully!');
             } else {
-                alert(res.message || "Failed to create customer");
+                toast.error(res.message || "Failed to create customer");
             }
         } catch (error) {
             console.error("Failed to create customer", error);
-            alert("Failed to create customer");
+            toast.error("Failed to create customer");
         } finally {
             setIsSubmitting(false);
         }

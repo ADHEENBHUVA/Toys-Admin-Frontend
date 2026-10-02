@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 const Banners = () => {
     const [banners, setBanners] = useState([]);
@@ -93,7 +94,22 @@ const Banners = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this banner?')) return;
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                popup: 'rounded-3xl',
+                confirmButton: 'rounded-xl font-bold px-6 py-2.5',
+                cancelButton: 'rounded-xl font-bold px-6 py-2.5'
+            }
+        });
+
+        if (!result.isConfirmed) return;
         
         try {
             const res = await fetch(`http://localhost:5000/api/banners/${id}`, {

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAPI } from '../utils/api';
+import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const Brands = () => {
     const [brands, setBrands] = useState([]);
@@ -37,7 +39,7 @@ const Brands = () => {
             }));
         } catch (error) {
             console.error("Error converting image:", error);
-            alert("Error uploading image");
+            toast.error("Error uploading image");
         }
     };
 
@@ -85,9 +87,10 @@ const Brands = () => {
             setFormData({ name: '', logo: '', description: '', website: '', status: 'Active' });
             setEditingId(null);
             loadBrands();
+            toast.success(editingId ? 'Brand updated successfully!' : 'Brand created successfully!');
         } catch (error) {
             console.error("Failed to save brand", error);
-            alert("Failed to save brand");
+            toast.error("Failed to save brand");
         } finally {
             setIsSubmitting(false);
         }
@@ -106,13 +109,30 @@ const Brands = () => {
     };
 
     const handleDeleteClick = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this brand?")) return;
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                popup: 'rounded-3xl',
+                confirmButton: 'rounded-xl font-bold px-6 py-2.5',
+                cancelButton: 'rounded-xl font-bold px-6 py-2.5'
+            }
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await fetchAPI(`/brands/${id}`, { method: 'DELETE' });
+            toast.success('Brand deleted successfully!');
             loadBrands();
         } catch (error) {
             console.error("Error deleting brand:", error);
-            alert("Failed to delete brand");
+            toast.error("Failed to delete brand");
         }
     };
 

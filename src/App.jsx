@@ -17,7 +17,10 @@ import Reviews from './pages/Reviews';
 import Coupons from './pages/Coupons';
 import ShippingSettings from './pages/ShippingSettings';
 import SocialSettings from './pages/SocialSettings';
+import DiscountSettings from './pages/DiscountSettings';
 import Profile from './pages/Profile';
+import Subscribers from './pages/Subscribers';
+import Testimonials from './pages/Testimonials';
 
 function App() {
   return (
@@ -58,9 +61,12 @@ function App() {
           <Route path="statistics" element={<Statistics />} />
           <Route path="feedbacks" element={<Feedbacks />} />
           <Route path="reviews" element={<Reviews />} />
+          <Route path="testimonials" element={<Testimonials />} />
           <Route path="coupons" element={<Coupons />} />
           <Route path="shipping" element={<ShippingSettings />} />
+          <Route path="subscribers" element={<Subscribers />} />
           <Route path="social" element={<SocialSettings />} />
+          <Route path="discount-settings" element={<DiscountSettings />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 

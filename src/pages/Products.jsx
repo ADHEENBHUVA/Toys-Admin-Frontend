@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAPI } from '../utils/api';
+import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 const Products = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -129,7 +131,7 @@ const Products = () => {
             }));
         } catch (error) {
             console.error("Error converting images:", error);
-            alert("Error uploading images");
+            toast.error("Error uploading images");
         }
     };
 
@@ -163,17 +165,18 @@ const Products = () => {
 
             if (response.success) {
                 // Reset form
-                setFormData({ name: '', brand: '', category: '', subCategory: '', price: '', stockQuantity: '', description: '', images: [] });
+                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [] });
                 setEditingId(null);
                 setIsModalOpen(false);
                 // Refresh table
                 loadProducts();
+                toast.success(editingId ? 'Product updated successfully!' : 'Product created successfully!');
             } else {
-                alert(response.message || `Failed to ${editingId ? 'update' : 'create'} product`);
+                toast.error(response.message || `Failed to ${editingId ? 'update' : 'create'} product`);
             }
         } catch (err) {
             console.error(err);
-            alert("An error occurred");
+            toast.error("An error occurred");
         } finally {
             setIsSaving(false);
         }
@@ -190,6 +193,7 @@ const Products = () => {
                     brand: fullProduct.brand?._id || fullProduct.brand || '',
                     category: fullProduct.category || '',
                     subCategory: fullProduct.subCategory?._id || fullProduct.subCategory || '',
+                    originalPrice: fullProduct.originalPrice || '',
                     price: fullProduct.price || '',
                     stockQuantity: fullProduct.stockQuantity || 0,
                     description: fullProduct.description || '',
@@ -199,42 +203,58 @@ const Products = () => {
                 setEditingId(fullProduct._id);
                 setIsModalOpen(true);
             } else {
-                alert("Failed to load product details");
+                toast.error("Failed to load product details");
             }
         } catch (error) {
             console.error("Error loading product details:", error);
-            alert("Error loading product details");
+            toast.error("Error loading product details");
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleDeleteClick = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this product?")) return;
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                popup: 'rounded-3xl',
+                confirmButton: 'rounded-xl font-bold px-6 py-2.5',
+                cancelButton: 'rounded-xl font-bold px-6 py-2.5'
+            }
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
             const response = await fetchAPI(`/products/${id}`, { method: 'DELETE' });
             if (response.success) {
+                toast.success('Product deleted successfully!');
                 loadProducts();
             } else {
-                alert(response.message || "Failed to delete product");
+                toast.error(response.message || "Failed to delete product");
             }
         } catch (error) {
             console.error("Error deleting product:", error);
-            alert("Failed to delete product");
+            toast.error("Failed to delete product");
         }
     };
 
     const openAddModal = () => {
-        setFormData({ name: '', brand: '', category: '', subCategory: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [] });
+        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [] });
         setEditingId(null);
         setIsModalOpen(true);
     };
 
     // Filter Logic
     const filteredProducts = products.filter(p => {
-        const matchesCategory = filterCategory === 'All' || p.category === filterCategory;
-        const searchString = `${p.name || ''} ${p._id || ''}`.toLowerCase();
+        const matchesCategory = filterCategory === 'All' || (p.category && p.category.trim().toLowerCase() === filterCategory.trim().toLowerCase());
+        const searchString = `${p.name || ''} ${p._id || ''} ${p.sku || ''} ${p.category || ''}`.toLowerCase();
         const matchesSearch = searchString.includes(searchTerm.toLowerCase());
         return matchesCategory && matchesSearch;
     });
@@ -353,8 +373,14 @@ const Products = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {currentTableData.map((product) => (
-                                <tr key={product._id} className="hover:bg-indigo-50/30 transition-colors group">
+                            {currentTableData.map((product) => {
+                                let rowBg = 'bg-red-50/70 hover:bg-red-100/60'; // Out of Stock
+                                if (product.stockQuantity >= 10) rowBg = 'bg-green-50/70 hover:bg-green-100/60'; // In Stock
+                                else if (product.stockQuantity >= 5) rowBg = 'bg-yellow-50/70 hover:bg-yellow-100/60'; // Low Stock
+                                else if (product.stockQuantity > 0) rowBg = 'bg-orange-50/70 hover:bg-orange-100/60'; // Very Low
+                                
+                                return (
+                                <tr key={product._id} className={`${rowBg} transition-colors group border-b border-white/50`}>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm shrink-0 flex items-center justify-center text-gray-300">
@@ -378,10 +404,12 @@ const Products = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
-                                            {product.stockQuantity > 10 ? (
-                                                <><span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span><span className="text-sm font-bold text-green-700">Active</span></>
+                                            {product.stockQuantity >= 10 ? (
+                                                <><span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span><span className="text-sm font-bold text-green-700">In Stock</span></>
+                                            ) : product.stockQuantity >= 5 ? (
+                                                <><span className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></span><span className="text-sm font-bold text-yellow-700">Low Stock</span></>
                                             ) : product.stockQuantity > 0 ? (
-                                                <><span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span><span className="text-sm font-bold text-amber-700">Low Stock</span></>
+                                                <><span className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></span><span className="text-sm font-bold text-orange-700">Very Low</span></>
                                             ) : (
                                                 <><span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span><span className="text-sm font-bold text-red-700">Out of Stock</span></>
                                             )}
@@ -399,7 +427,8 @@ const Products = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
@@ -535,7 +564,11 @@ const Products = () => {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Price (₹)</label>
+                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Original Price (₹)</label>
+                                        <input type="number" min="0" value={formData.originalPrice} onChange={e => setFormData({ ...formData, originalPrice: e.target.value })} placeholder="0.00" className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Current Price (₹)</label>
                                         <input required type="number" min="0" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" />
                                     </div>
                                     <div className="space-y-2">
@@ -549,7 +582,7 @@ const Products = () => {
                                         <button 
                                             type="button" 
                                             onClick={() => {
-                                                const allAges = ['0-18 months', '18-36 months', '3-5 years', '5-7 years', '7-9 years', '9-12 years', '12+ years'];
+                                                const allAges = ['0-6 Months', '6-12 Months', '1-2 Years', '3-5 Years', '6-8 Years', '9-12 Years', '12+ Years'];
                                                 if (formData.ageGroup.length === allAges.length) {
                                                     setFormData({ ...formData, ageGroup: [] });
                                                 } else {
@@ -562,7 +595,7 @@ const Products = () => {
                                         </button>
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-gray-50/80 border border-gray-200 rounded-xl p-4">
-                                        {['0-18 months', '18-36 months', '3-5 years', '5-7 years', '7-9 years', '9-12 years', '12+ years'].map(age => (
+                                        {['0-6 Months', '6-12 Months', '1-2 Years', '3-5 Years', '6-8 Years', '9-12 Years', '12+ Years'].map(age => (
                                             <label key={age} className="flex items-center gap-2 cursor-pointer group">
                                                 <input 
                                                     type="checkbox" 

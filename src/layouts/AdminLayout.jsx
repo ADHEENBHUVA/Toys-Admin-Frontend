@@ -26,6 +26,7 @@ const AdminLayout = () => {
         '/coupons': 'Coupons',
         '/shipping': 'Shipping Settings',
         '/social': 'Social Settings',
+        '/discount-settings': 'Discount Settings',
         '/profile': 'My Profile'
     };
 
@@ -215,6 +216,18 @@ const AdminLayout = () => {
                         )}
                     </NavLink>
 
+                    <NavLink to="/subscribers" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
+                        {({ isActive }) => (
+                            <>
+                                {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r-full"></div>}
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${isActive ? 'bg-white shadow-sm text-indigo-600' : 'bg-gray-50 text-gray-400 group-hover:text-gray-600 group-hover:bg-white group-hover:shadow-sm'}`}>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                Subscribers
+                            </>
+                        )}
+                    </NavLink>
+
                     <NavLink to="/social" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
                         {({ isActive }) => (
                             <>
@@ -223,6 +236,18 @@ const AdminLayout = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                                 </div>
                                 Social Settings
+                            </>
+                        )}
+                    </NavLink>
+
+                    <NavLink to="/discount-settings" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
+                        {({ isActive }) => (
+                            <>
+                                {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r-full"></div>}
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${isActive ? 'bg-white shadow-sm text-indigo-600' : 'bg-gray-50 text-gray-400 group-hover:text-gray-600 group-hover:bg-white group-hover:shadow-sm'}`}>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                                </div>
+                                Discount Settings
                             </>
                         )}
                     </NavLink>
@@ -259,6 +284,18 @@ const AdminLayout = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                                 </div>
                                 Reviews
+                            </>
+                        )}
+                    </NavLink>
+
+                    <NavLink to="/testimonials" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
+                        {({ isActive }) => (
+                            <>
+                                {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 rounded-r-full"></div>}
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${isActive ? 'bg-white shadow-sm text-indigo-600' : 'bg-gray-50 text-gray-400 group-hover:text-gray-600 group-hover:bg-white group-hover:shadow-sm'}`}>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                                </div>
+                                Testimonials
                             </>
                         )}
                     </NavLink>

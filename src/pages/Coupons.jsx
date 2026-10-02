@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAPI } from '../utils/api';
+import toast from 'react-hot-toast';
 
 const Coupons = () => {
     const [coupons, setCoupons] = useState([]);
@@ -49,12 +50,13 @@ const Coupons = () => {
                     expiryDate: '',
                     status: 'Active'
                 });
+                toast.success('Coupon created successfully!');
             } else {
-                alert(response.message || 'Failed to create coupon');
+                toast.error(response.message || 'Failed to create coupon');
             }
         } catch (error) {
             console.error('Error creating coupon:', error);
-            alert('An error occurred');
+            toast.error('An error occurred');
         }
     };
 
