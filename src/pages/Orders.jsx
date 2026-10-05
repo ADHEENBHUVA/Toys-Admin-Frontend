@@ -132,7 +132,16 @@ const Orders = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filteredOrders.map((order) => {
-                                    const customerName = order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : 'Unknown Customer';
+                                    let customerName = 'Unknown Customer';
+                                    if (order.customer) {
+                                        if (order.customer.name) {
+                                            customerName = order.customer.name;
+                                        } else if (order.customer.firstName || order.customer.lastName) {
+                                            customerName = `${order.customer.firstName || ''} ${order.customer.lastName || ''}`.trim();
+                                        } else {
+                                            customerName = 'Unknown Customer';
+                                        }
+                                    }
                                     const customerEmail = order.customer ? order.customer.email : 'N/A';
                                     const initial = customerName !== 'Unknown Customer' ? customerName.charAt(0).toUpperCase() : '?';
                                     
@@ -153,7 +162,7 @@ const Orders = () => {
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6 text-sm text-gray-600 whitespace-nowrap">
-                                                {new Date(order.createdAt).toLocaleDateString()}
+                                                {new Date(order.createdAt).toLocaleDateString('en-GB')}
                                             </td>
                                             <td className="py-4 px-6 text-sm text-gray-600 whitespace-nowrap">
                                                 {order.orderItems?.length || 0}
@@ -222,3 +231,4 @@ const Orders = () => {
 };
 
 export default Orders;
+

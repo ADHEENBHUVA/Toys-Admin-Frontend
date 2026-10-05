@@ -115,7 +115,7 @@ const CustomerDetails = () => {
                             <div className="flex justify-between items-center">
                                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Joined Date</span>
                                 <span className="text-sm font-bold text-gray-700">
-                                    {new Date(customer.createdAt).toLocaleDateString()}
+                                    {new Date(customer.createdAt).toLocaleDateString('en-GB')}
                                 </span>
                             </div>
                         </div>
@@ -169,3 +169,4 @@ const CustomerDetails = () => {
 };
 
 export default CustomerDetails;
+

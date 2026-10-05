@@ -327,12 +327,7 @@ const Login = () => {
                             <label className="block text-sm font-semibold text-slate-700" htmlFor="forgotEmail">
                                 Email Address
                             </label>
-                            <input
-                                type="email"
-                                id="forgotEmail"
-                                className="block w-full rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 bg-slate-50/50 px-4 py-3.5 text-slate-900 transition-all duration-200 focus:bg-white focus:outline-none focus:ring-4"
-                                value={forgotEmail}
-                                onChange={(e) => { setForgotEmail(e.target.value); clearMessages(); }}
+                            <input type="email" id="forgotEmail" className="block w-full rounded-2xl border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 bg-slate-50/50 px-4 py-3.5 text-slate-900 transition-all duration-200 focus:bg-white focus:outline-none focus:ring-4" value={forgotEmail} onChange={(e) => { setForgotEmail(e.target.value); clearMessages(); }} pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Please enter a valid email address with @ and ." required
                                 placeholder="e.g. admin@example.com"
                                 disabled={isLoading}
                                 required

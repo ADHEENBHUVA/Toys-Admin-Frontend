@@ -120,7 +120,7 @@ const Customers = () => {
                                                     </div>
                                                     <div>
                                                         <div className="text-sm font-semibold text-gray-900">{fullName}</div>
-                                                        <div className="text-xs text-gray-500">Joined {new Date(customer.createdAt).toLocaleDateString()}</div>
+                                                        <div className="text-xs text-gray-500">Joined {new Date(customer.createdAt).toLocaleDateString('en-GB')}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -197,11 +197,7 @@ const Customers = () => {
                             
                             <div>
                                 <label className="block text-xs font-bold text-gray-900 uppercase tracking-widest pl-1 mb-2">Email Address</label>
-                                <input 
-                                    type="email" 
-                                    required
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Please enter a valid email address with @ and ." 
                                     placeholder="john.doe@example.com"
                                     className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all shadow-sm"
                                 />
@@ -260,3 +256,4 @@ const Customers = () => {
 };
 
 export default Customers;
+

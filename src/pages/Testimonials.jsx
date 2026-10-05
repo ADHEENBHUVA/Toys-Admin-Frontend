@@ -167,7 +167,7 @@ const Testimonials = () => {
                             
                             <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
                                 <span className="text-xs text-gray-500">
-                                    {new Date(test.createdAt).toLocaleDateString()}
+                                    {new Date(test.createdAt).toLocaleDateString('en-GB')}
                                 </span>
                                 <button 
                                     onClick={() => toggleStatus(test._id, test.isActive)}
@@ -303,3 +303,4 @@ const Testimonials = () => {
 };
 
 export default Testimonials;
+

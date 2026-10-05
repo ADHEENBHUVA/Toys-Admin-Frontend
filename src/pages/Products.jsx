@@ -26,7 +26,8 @@ const Products = () => {
         stockQuantity: '',
         description: '',
         images: [],
-        ageGroup: []
+        ageGroup: [],
+        discountDisplayType: 'percentage'
     });
     const [isSaving, setIsSaving] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -165,7 +166,7 @@ const Products = () => {
 
             if (response.success) {
                 // Reset form
-                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [] });
+                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage' });
                 setEditingId(null);
                 setIsModalOpen(false);
                 // Refresh table
@@ -198,7 +199,8 @@ const Products = () => {
                     stockQuantity: fullProduct.stockQuantity || 0,
                     description: fullProduct.description || '',
                     images: fullProduct.images || [],
-                    ageGroup: fullProduct.ageGroup || []
+                    ageGroup: fullProduct.ageGroup || [],
+                    discountDisplayType: fullProduct.discountDisplayType || 'percentage'
                 });
                 setEditingId(fullProduct._id);
                 setIsModalOpen(true);
@@ -246,7 +248,7 @@ const Products = () => {
     };
 
     const openAddModal = () => {
-        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [] });
+        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage' });
         setEditingId(null);
         setIsModalOpen(true);
     };
@@ -566,6 +568,13 @@ const Products = () => {
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Original Price (₹)</label>
                                         <input type="number" min="0" value={formData.originalPrice} onChange={e => setFormData({ ...formData, originalPrice: e.target.value })} placeholder="0.00" className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Discount Display</label>
+                                        <select value={formData.discountDisplayType} onChange={e => setFormData({ ...formData, discountDisplayType: e.target.value })} className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm appearance-none font-medium">
+                                            <option value="percentage">Percentage (e.g., 30% OFF)</option>
+                                            <option value="amount">Amount (e.g., Save ₹500)</option>
+                                        </select>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Current Price (₹)</label>

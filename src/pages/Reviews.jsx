@@ -73,13 +73,23 @@ const Reviews = () => {
                             <tbody className="divide-y divide-gray-50">
                                 {reviews.map((rev) => {
                                     const productName = rev.product ? rev.product.name : 'Unknown Product';
-                                    const customerName = rev.customer ? `${rev.customer.firstName} ${rev.customer.lastName}` : 'Anonymous';
+                                    let customerName = 'Anonymous';
+                                    if (rev.customer) {
+                                        if (rev.customer.name) {
+                                            customerName = rev.customer.name;
+                                        } else if (rev.customer.firstName || rev.customer.lastName) {
+                                            customerName = `${rev.customer.firstName || ''} ${rev.customer.lastName || ''}`.trim();
+                                        } else {
+                                            customerName = 'Unknown';
+                                        }
+                                    }
+                                    const customerEmail = rev.customer?.email ? ` (${rev.customer.email})` : '';
                                     
                                     return (
                                         <tr key={rev._id} className="hover:bg-amber-50/30 transition-colors group">
                                             <td className="py-4 px-6">
                                                 <div className="text-sm font-bold text-gray-900">{productName}</div>
-                                                <div className="text-xs text-gray-500">by {customerName} on {new Date(rev.createdAt).toLocaleDateString()}</div>
+                                                <div className="text-xs text-gray-500">by {customerName}{customerEmail} on {new Date(rev.createdAt).toLocaleDateString('en-GB')}</div>
                                             </td>
                                             <td className="py-4 px-6 whitespace-nowrap flex items-center mt-1">
                                                 {renderStars(rev.rating)}
@@ -121,3 +131,4 @@ const Reviews = () => {
 };
 
 export default Reviews;
+

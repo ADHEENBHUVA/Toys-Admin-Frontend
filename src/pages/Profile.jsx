@@ -193,24 +193,12 @@ const Profile = () => {
 
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700 shadow-sm"
-                                        placeholder="Enter phone number"
-                                    />
+                                    <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-700 shadow-sm" placeholder="Enter phone number" pattern="[0-9]{10}" maxLength="10" minLength="10" title="Please enter exactly 10 digits" onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); }} />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Email Address (Username)</label>
-                                    <input
-                                        type="email"
-                                        value={formData.email}
-                                        disabled
-                                        className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl font-medium text-slate-500 cursor-not-allowed opacity-70"
-                                    />
+                                    <input type="email" value={formData.email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl font-medium text-slate-500 cursor-not-allowed opacity-70" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Please enter a valid email address with @ and ." />
                                     <p className="text-xs text-slate-400 mt-2 font-medium flex items-center gap-1">
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                         Your email address cannot be changed.
