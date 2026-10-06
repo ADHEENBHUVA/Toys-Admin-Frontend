@@ -27,7 +27,9 @@ const Products = () => {
         description: '',
         images: [],
         ageGroup: [],
-        discountDisplayType: 'percentage'
+        discountDisplayType: 'percentage',
+        isReturnable: false,
+        returnDays: 0
     });
     const [isSaving, setIsSaving] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -166,7 +168,7 @@ const Products = () => {
 
             if (response.success) {
                 // Reset form
-                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage' });
+                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
                 setEditingId(null);
                 setIsModalOpen(false);
                 // Refresh table
@@ -200,7 +202,9 @@ const Products = () => {
                     description: fullProduct.description || '',
                     images: fullProduct.images || [],
                     ageGroup: fullProduct.ageGroup || [],
-                    discountDisplayType: fullProduct.discountDisplayType || 'percentage'
+                    discountDisplayType: fullProduct.discountDisplayType || 'percentage',
+                    isReturnable: fullProduct.isReturnable || false,
+                    returnDays: fullProduct.returnDays || 0
                 });
                 setEditingId(fullProduct._id);
                 setIsModalOpen(true);
@@ -248,7 +252,7 @@ const Products = () => {
     };
 
     const openAddModal = () => {
-        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage' });
+        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
         setEditingId(null);
         setIsModalOpen(true);
     };
@@ -584,6 +588,18 @@ const Products = () => {
                                         <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Initial Stock</label>
                                         <input required type="number" min="0" value={formData.stockQuantity} onChange={e => setFormData({ ...formData, stockQuantity: e.target.value })} placeholder="0" className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" />
                                     </div>
+                                    <div className="space-y-2 flex items-center pt-8">
+                                        <label className="flex items-center gap-3 cursor-pointer">
+                                            <input type="checkbox" checked={formData.isReturnable} onChange={e => setFormData({ ...formData, isReturnable: e.target.checked, returnDays: e.target.checked ? 7 : 0 })} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" />
+                                            <span className="text-sm font-bold text-gray-900">Is Returnable?</span>
+                                        </label>
+                                    </div>
+                                    {formData.isReturnable && (
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Return Window (Days)</label>
+                                            <input required type="number" min="1" value={formData.returnDays} onChange={e => setFormData({ ...formData, returnDays: parseInt(e.target.value) || 0 })} placeholder="7" className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm" />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between pl-1">

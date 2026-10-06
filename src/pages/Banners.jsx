@@ -15,6 +15,8 @@ const Banners = () => {
     const [formData, setFormData] = useState({
         image: '',
         title: '',
+        subtitle: '',
+        buttonText: '',
         buttonLink: '',
         platform: 'PC',
         status: 'Active'
@@ -24,6 +26,8 @@ const Banners = () => {
         setFormData({
             image: banner.image || '',
             title: banner.title || '',
+            subtitle: banner.subtitle || '',
+            buttonText: banner.buttonText || '',
             buttonLink: banner.buttonLink || '',
             platform: banner.platform || 'PC',
             status: banner.status || 'Active'
@@ -82,7 +86,7 @@ const Banners = () => {
                 showToast(`Banner ${editingBannerId ? 'updated' : 'added'} successfully!`, 'success');
                 setIsAdding(false);
                 setEditingBannerId(null);
-                setFormData({ image: '', title: '', buttonLink: '', platform: activeTab, status: 'Active' });
+                setFormData({ image: '', title: '', subtitle: '', buttonText: '', buttonLink: '', platform: activeTab, status: 'Active' });
                 fetchBanners();
             } else {
                 const data = await res.json();
@@ -340,6 +344,26 @@ const Banners = () => {
                                         value={formData.title}
                                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                                         className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Subtitle (Optional)</label>
+                                    <input 
+                                        type="text" 
+                                        value={formData.subtitle}
+                                        onChange={(e) => setFormData({...formData, subtitle: e.target.value})}
+                                        className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium"
+                                        placeholder="Up to 50% Off"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Button Text (Optional)</label>
+                                    <input 
+                                        type="text" 
+                                        value={formData.buttonText}
+                                        onChange={(e) => setFormData({...formData, buttonText: e.target.value})}
+                                        className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium"
+                                        placeholder="Shop Now"
                                     />
                                 </div>
                                 <div>

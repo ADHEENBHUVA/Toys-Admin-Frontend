@@ -16,6 +16,11 @@ const Coupons = () => {
         expiryDate: '',
         status: 'Active'
     });
+    const [viewUsersModalOpen, setViewUsersModalOpen] = useState(false);
+    const [selectedCouponUsers, setSelectedCouponUsers] = useState([]);
+    const [selectedCouponCode, setSelectedCouponCode] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
 
     useEffect(() => {
         const loadCoupons = async () => {
@@ -106,6 +111,18 @@ const Coupons = () => {
         });
     };
 
+    const handleViewUsers = (coupon) => {
+        setSelectedCouponUsers(coupon.usedBy || []);
+        setSelectedCouponCode(coupon.code);
+        setCurrentPage(1);
+        setViewUsersModalOpen(true);
+    };
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = selectedCouponUsers.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(selectedCouponUsers.length / usersPerPage);
+
     return (
         <div className="p-6 md:p-8 lg:p-10 font-sans min-h-full bg-gray-50/50">
             <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
@@ -170,6 +187,9 @@ const Coupons = () => {
                                             </span>
                                         </td>
                                         <td className="py-4 px-6 text-right whitespace-nowrap">
+                                            <button onClick={() => handleViewUsers(coupon)} className="text-gray-500 hover:text-teal-600 bg-gray-50 hover:bg-teal-50 p-2 rounded-lg transition-colors inline-flex items-center justify-center mr-2" title="View Users">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                            </button>
                                             <button onClick={() => handleEdit(coupon)} className="text-gray-500 hover:text-indigo-600 bg-gray-50 hover:bg-indigo-50 p-2 rounded-lg transition-colors inline-flex items-center justify-center mr-2">
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                             </button>
@@ -257,6 +277,81 @@ const Coupons = () => {
                     </div>
                 </div>
             )}
+        {/* View Users Modal */}
+        {viewUsersModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                <div 
+                    className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" 
+                    onClick={() => setViewUsersModalOpen(false)}
+                ></div>
+
+                <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden transform transition-all border border-gray-100 flex flex-col max-h-[90vh]">
+                    <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div>
+                            <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">Coupon Usage</h3>
+                            <p className="text-sm font-medium text-gray-500 mt-1">Users who claimed <span className="font-bold text-rose-600">{selectedCouponCode}</span></p>
+                        </div>
+                        <button onClick={() => setViewUsersModalOpen(false)} className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shadow-sm border border-gray-200">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+
+                    <div className="p-0 overflow-y-auto flex-1 bg-white">
+                        {currentUsers.length === 0 ? (
+                            <div className="p-12 text-center text-gray-500 font-medium">No users have used this coupon yet.</div>
+                        ) : (
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-100">
+                                        <th className="py-3 px-6 font-semibold text-gray-600 text-xs uppercase tracking-wider">User</th>
+                                        <th className="py-3 px-6 font-semibold text-gray-600 text-xs uppercase tracking-wider">Email</th>
+                                        <th className="py-3 px-6 font-semibold text-gray-600 text-xs uppercase tracking-wider">Date & Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    {currentUsers.map((usage, idx) => (
+                                        <tr key={idx} className="hover:bg-gray-50/50">
+                                            <td className="py-4 px-6 text-sm font-semibold text-gray-900">
+                                                {usage.user ? (usage.user.name || `${usage.user.firstName || ''} ${usage.user.lastName || ''}`.trim()) || 'No Name' : 'Unknown User'}
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-gray-500">
+                                                {usage.user?.email || 'N/A'}
+                                            </td>
+                                            <td className="py-4 px-6 text-sm text-gray-500 whitespace-nowrap">
+                                                <span className="font-medium text-gray-700">{new Date(usage.usedAt).toLocaleDateString()}</span> <span className="text-xs ml-1 text-gray-400">{new Date(usage.usedAt).toLocaleTimeString()}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="px-8 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
+                            <span className="text-sm text-gray-500">Page {currentPage} of {totalPages}</span>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Previous
+                                </button>
+                                <button 
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        )}
         </div>
     );
 };

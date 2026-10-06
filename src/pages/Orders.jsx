@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAPI } from '../utils/api';
+import toast from 'react-hot-toast';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
@@ -28,6 +29,24 @@ const Orders = () => {
         }
     };
 
+    const handleStatusChange = async (orderId, newStatus) => {
+        try {
+            const response = await fetchAPI(`/orders/${orderId}/status`, {
+                method: 'PUT',
+                body: JSON.stringify({ status: newStatus })
+            });
+            if (response.success) {
+                toast.success('Order status updated successfully');
+                setOrders(orders.map(o => o._id === orderId ? { ...o, orderStatus: newStatus } : o));
+            } else {
+                toast.error('Failed to update status');
+            }
+        } catch (err) {
+            console.error('Error updating status:', err);
+            toast.error('Error updating status');
+        }
+    };
+
     const getStatusStyle = (status) => {
         switch (status) {
             case 'Delivered':
@@ -43,8 +62,9 @@ const Orders = () => {
             case 'Failed':
                 return 'bg-red-100 text-red-700 border-red-200';
             case 'Refunded':
-            case 'Returned':
                 return 'bg-gray-100 text-gray-700 border-gray-200';
+            case 'Returned':
+                return 'bg-orange-100 text-orange-700 border-orange-200';
             default:
                 return 'bg-gray-100 text-gray-700 border-gray-200';
         }
@@ -171,9 +191,20 @@ const Orders = () => {
                                                 ₹{order.totalAmount?.toFixed(2)}
                                             </td>
                                             <td className="py-4 px-6 whitespace-nowrap">
-                                                <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusStyle(order.orderStatus)}`}>
-                                                    {order.orderStatus}
-                                                </span>
+                                                <select 
+                                                    value={order.orderStatus}
+                                                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                                    className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border outline-none cursor-pointer appearance-none ${getStatusStyle(order.orderStatus)}`}
+                                                >
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Processing">Processing</option>
+                                                    <option value="Confirmed">Confirmed</option>
+                                                    <option value="Shipped">Shipped</option>
+                                                    <option value="Out for Delivery">Out for Delivery</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    <option value="Cancelled">Cancelled</option>
+                                                    <option value="Returned">Returned</option>
+                                                </select>
                                             </td>
                                             <td className="py-4 px-6 text-right whitespace-nowrap">
                                                 <button className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors mr-2 inline-flex items-center justify-center group-hover:bg-white group-hover:shadow-sm" title="View Details">
