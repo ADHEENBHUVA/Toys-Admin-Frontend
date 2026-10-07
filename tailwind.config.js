@@ -7,8 +7,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Poppins"', 'sans-serif'],
-                inter: ['"Inter"', 'sans-serif'],
+                sans: ['"DM Sans"', 'sans-serif'],
+                serif: ['"Lora"', 'serif'],
+                inter: ['"DM Sans"', 'sans-serif'],
             },
         },
     },
