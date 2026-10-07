@@ -11,6 +11,7 @@ import CustomerDetails from './pages/CustomerDetails';
 import Categories from './pages/Categories';
 import Brands from './pages/Brands';
 import Banners from './pages/Banners';
+import PromoMediaManager from './pages/PromoMediaManager';
 import Statistics from './pages/Statistics';
 import Feedbacks from './pages/Feedbacks';
 import Reviews from './pages/Reviews';
@@ -58,6 +59,7 @@ function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="brands" element={<Brands />} />
           <Route path="banners" element={<Banners />} />
+          <Route path="promomedia" element={<PromoMediaManager />} />
           <Route path="statistics" element={<Statistics />} />
           <Route path="feedbacks" element={<Feedbacks />} />
           <Route path="reviews" element={<Reviews />} />
