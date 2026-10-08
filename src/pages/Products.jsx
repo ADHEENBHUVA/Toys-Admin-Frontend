@@ -168,7 +168,7 @@ const Products = () => {
 
             if (response.success) {
                 // Reset form
-                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
+                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
                 setEditingId(null);
                 setIsModalOpen(false);
                 // Refresh table
@@ -202,6 +202,7 @@ const Products = () => {
                     description: fullProduct.description || '',
                     images: fullProduct.images || [],
                     ageGroup: fullProduct.ageGroup || [],
+                    gender: fullProduct.gender || 'All',
                     discountDisplayType: fullProduct.discountDisplayType || 'percentage',
                     isReturnable: fullProduct.isReturnable || false,
                     returnDays: fullProduct.returnDays || 0
@@ -252,7 +253,7 @@ const Products = () => {
     };
 
     const openAddModal = () => {
-        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
+        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
         setEditingId(null);
         setIsModalOpen(true);
     };
@@ -567,6 +568,14 @@ const Products = () => {
                                             {brandOptions.map(brand => (
                                                 <option key={brand._id} value={brand._id}>{brand.name}</option>
                                             ))}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Gender</label>
+                                        <select value={formData.gender || 'All'} onChange={e => setFormData({ ...formData, gender: e.target.value })} className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm appearance-none font-medium">
+                                            <option value="All">All / Unisex</option>
+                                            <option value="Boys">Boys</option>
+                                            <option value="Girls">Girls</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2">

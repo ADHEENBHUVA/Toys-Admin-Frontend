@@ -27,6 +27,7 @@ const AdminLayout = () => {
         '/shipping': 'Shipping Settings',
         '/social': 'Social Settings',
         '/discount-settings': 'Discount Settings',
+
         '/profile': 'My Profile'
     };
 
@@ -215,6 +216,8 @@ const AdminLayout = () => {
                             </>
                         )}
                     </NavLink>
+
+
 
                     <NavLink to="/shipping" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
                         {({ isActive }) => (

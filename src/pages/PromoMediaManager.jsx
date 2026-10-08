@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { Plus, Image as ImageIcon, Video, Trash2, Edit } from 'lucide-react';
+import { Plus, Image as ImageIcon, Video, Trash2, Edit, AlertTriangle, X } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000/api';
 
 const PromoMediaManager = () => {
     const [media, setMedia] = useState([]);
+    const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(null);
     
     const [formData, setFormData] = useState({
         type: 'image',
@@ -22,7 +24,20 @@ const PromoMediaManager = () => {
     
     useEffect(() => {
         fetchMedia();
+        fetchProducts();
     }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${API_URL}/products`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setProducts(res.data.products || res.data);
+        } catch (error) {
+            console.error('Failed to fetch products');
+        }
+    };
 
     const fetchMedia = async () => {
         try {
@@ -65,14 +80,15 @@ const PromoMediaManager = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this media?')) return;
+    const confirmDelete = async () => {
+        if (!deleteConfirmId) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`${API_URL}/promomedia/${id}`, {
+            await axios.delete(`${API_URL}/promomedia/${deleteConfirmId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success('Media deleted successfully');
+            setDeleteConfirmId(null);
             fetchMedia();
         } catch (error) {
             toast.error('Failed to delete media');
@@ -99,12 +115,12 @@ const PromoMediaManager = () => {
                     <div key={item._id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group">
                         <div className="aspect-video bg-slate-100 relative">
                             {item.type === 'video' ? (
-                                <video src={`http://localhost:5000${item.mediaUrl}`} className="w-full h-full object-cover" controls muted />
+                                <video src={item.mediaUrl.startsWith('http') || item.mediaUrl.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl}`} className="w-full h-full object-cover" controls muted />
                             ) : (
-                                <img src={`http://localhost:5000${item.mediaUrl}`} alt={item.title} className="w-full h-full object-cover" />
+                                <img src={item.mediaUrl.startsWith('http') || item.mediaUrl.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl}`} alt={item.title} className="w-full h-full object-cover" />
                             )}
                             <div className="absolute top-4 right-4 flex gap-2">
-                                <button onClick={() => handleDelete(item._id)} className="p-2 bg-white/90 rounded-lg text-red-500 hover:bg-red-50">
+                                <button onClick={() => setDeleteConfirmId(item._id)} className="p-2 bg-white/90 rounded-lg text-red-500 hover:bg-red-50">
                                     <Trash2 size={18} />
                                 </button>
                             </div>
@@ -160,11 +176,65 @@ const PromoMediaManager = () => {
                                 />
                             </div>
 
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Link to Product</label>
+                                <select 
+                                    className="w-full border border-slate-200 rounded-xl p-3"
+                                    value={formData.link ? formData.link.replace('/product/', '') : ''}
+                                    onChange={(e) => {
+                                        const selectedProduct = products.find(p => p._id === e.target.value);
+                                        if (selectedProduct) {
+                                            setFormData({
+                                                ...formData, 
+                                                link: `/product/${selectedProduct._id}`,
+                                                title: selectedProduct.name,
+                                                subtitle: `Club: ₹${selectedProduct.clubPrice || selectedProduct.price}`
+                                            });
+                                        } else {
+                                            setFormData({...formData, link: ''});
+                                        }
+                                    }}
+                                >
+                                    <option value="">-- No Product / Custom Link --</option>
+                                    {products && products.map(p => (
+                                        <option key={p._id} value={p._id}>{p.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Cancel</button>
                                 <button type="submit" className="flex-1 px-4 py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700">Upload Media</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            
+            {/* Delete Confirmation Modal */}
+            {deleteConfirmId && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-100">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                                <AlertTriangle className="text-red-500 w-6 h-6" />
+                            </div>
+                            <button onClick={() => setDeleteConfirmId(null)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full hover:bg-slate-200 transition-colors">
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <h3 className="text-xl font-black text-slate-800 mb-2">Delete Media?</h3>
+                        <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                            Are you sure you want to delete this promotional media? This action cannot be undone and it will be removed from the customer website immediately.
+                        </p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setDeleteConfirmId(null)} className="flex-1 px-4 py-3 rounded-xl font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                                Cancel
+                            </button>
+                            <button onClick={confirmDelete} className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all hover:shadow-red-500/50">
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
