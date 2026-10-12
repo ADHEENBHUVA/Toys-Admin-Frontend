@@ -13,6 +13,7 @@ const Products = () => {
     const [products, setProducts] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [brandOptions, setBrandOptions] = useState([]);
+    const [collectionOptions, setCollectionOptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -27,6 +28,8 @@ const Products = () => {
         description: '',
         images: [],
         ageGroup: [],
+        collections: [],
+        subCollections: [],
         discountDisplayType: 'percentage',
         isReturnable: false,
         returnDays: 0
@@ -58,11 +61,13 @@ const Products = () => {
     useEffect(() => {
         const loadCategoriesAndBrands = async () => {
             try {
-                const [catRes, brandRes] = await Promise.all([
+                const [catRes, brandRes, colRes] = await Promise.all([
                     fetchAPI('/categories'),
-                    fetchAPI('/brands')
+                    fetchAPI('/brands'),
+                    fetchAPI('/collections')
                 ]);
                 if (catRes.success) setCategoryOptions(catRes.data);
+                if (colRes.success) setCollectionOptions(colRes.data);
                 
                 // Brands might be { success: true, data: [...] } or just an array
                 if (brandRes.success) {
@@ -168,7 +173,7 @@ const Products = () => {
 
             if (response.success) {
                 // Reset form
-                setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
+                setFormData({ name: '', brand: '', category: '', subCategory: '', collections: [], subCollections: [], originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
                 setEditingId(null);
                 setIsModalOpen(false);
                 // Refresh table
@@ -202,6 +207,8 @@ const Products = () => {
                     description: fullProduct.description || '',
                     images: fullProduct.images || [],
                     ageGroup: fullProduct.ageGroup || [],
+                    collections: fullProduct.collections?.map(c => c._id) || [],
+                    subCollections: fullProduct.subCollections?.map(sc => sc._id) || [],
                     gender: fullProduct.gender || 'All',
                     discountDisplayType: fullProduct.discountDisplayType || 'percentage',
                     isReturnable: fullProduct.isReturnable || false,
@@ -253,7 +260,7 @@ const Products = () => {
     };
 
     const openAddModal = () => {
-        setFormData({ name: '', brand: '', category: '', subCategory: '', originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
+        setFormData({ name: '', brand: '', category: '', subCategory: '', collections: [], subCollections: [], originalPrice: '', price: '', stockQuantity: '', description: '', images: [], ageGroup: [], gender: 'All', discountDisplayType: 'percentage', isReturnable: false, returnDays: 0 });
         setEditingId(null);
         setIsModalOpen(true);
     };
@@ -649,6 +656,69 @@ const Products = () => {
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* Collections Checklist */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between pl-1">
+                                        <label className="text-xs font-bold text-gray-900 uppercase tracking-widest">Collections</label>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-gray-50/80 border border-gray-200 rounded-xl p-4">
+                                        {collectionOptions.map(col => (
+                                            <label key={col._id} className="flex items-center gap-2 cursor-pointer group">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={formData.collections?.includes(col._id)}
+                                                    onChange={(e) => {
+                                                        const current = formData.collections || [];
+                                                        if (e.target.checked) {
+                                                            setFormData({ ...formData, collections: [...current, col._id] });
+                                                        } else {
+                                                            // If unchecking, remove this collection and its subcollections
+                                                            const newCols = current.filter(c => c !== col._id);
+                                                            const subColIds = (col.subCollections || []).map(sc => sc._id);
+                                                            const newSubCols = (formData.subCollections || []).filter(sc => !subColIds.includes(sc));
+                                                            setFormData({ ...formData, collections: newCols, subCollections: newSubCols });
+                                                        }
+                                                    }}
+                                                    className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                                                />
+                                                <span className="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">{col.name}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* SubCollections Checklist based on selected Collections */}
+                                {formData.collections?.length > 0 && (
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between pl-1">
+                                            <label className="text-xs font-bold text-gray-900 uppercase tracking-widest">Sub Collections</label>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-gray-50/80 border border-gray-200 rounded-xl p-4">
+                                            {collectionOptions
+                                                .filter(col => formData.collections.includes(col._id))
+                                                .flatMap(col => col.subCollections || [])
+                                                .map(subCol => (
+                                                <label key={subCol._id} className="flex items-center gap-2 cursor-pointer group">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={formData.subCollections?.includes(subCol._id)}
+                                                        onChange={(e) => {
+                                                            const current = formData.subCollections || [];
+                                                            if (e.target.checked) {
+                                                                setFormData({ ...formData, subCollections: [...current, subCol._id] });
+                                                            } else {
+                                                                setFormData({ ...formData, subCollections: current.filter(sc => sc !== subCol._id) });
+                                                            }
+                                                        }}
+                                                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 cursor-pointer"
+                                                    />
+                                                    <span className="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">{subCol.name}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Product Description</label>
                                     <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} rows="3" placeholder="Brief description of the toy..." className="w-full bg-gray-50/80 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all shadow-sm resize-none"></textarea>

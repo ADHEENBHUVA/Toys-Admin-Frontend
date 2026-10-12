@@ -11,6 +11,22 @@ const PromoMediaManager = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [selectedProductIds, setSelectedProductIds] = useState([]);
+    const [productSearchTerm, setProductSearchTerm] = useState('');
+    
+    const parseLinkToIds = (link) => {
+        if (!link) return [];
+        if (link.startsWith('/product/')) return [link.replace('/product/', '')];
+        if (link.startsWith('/products?ids=')) return link.replace('/products?ids=', '').split(',');
+        return [];
+    };
+    
+    const buildLinkFromIds = (ids) => {
+        if (ids.length === 0) return '';
+        if (ids.length === 1) return `/product/${ids[0]}`;
+        return `/products?ids=${ids.join(',')}`;
+    };
     
     const [formData, setFormData] = useState({
         type: 'image',
@@ -33,7 +49,8 @@ const PromoMediaManager = () => {
             const res = await axios.get(`${API_URL}/products`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setProducts(res.data.products || res.data);
+            const data = res.data.data || res.data.products || res.data;
+            setProducts(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Failed to fetch products');
         }
@@ -45,7 +62,7 @@ const PromoMediaManager = () => {
             const res = await axios.get(`${API_URL}/promomedia`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setMedia(res.data);
+            setMedia(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             toast.error('Failed to fetch media');
         } finally {
@@ -59,24 +76,37 @@ const PromoMediaManager = () => {
             const token = localStorage.getItem('token');
             const data = new FormData();
             Object.keys(formData).forEach(key => {
-                if (formData[key] !== null) {
+                if (formData[key] !== null && formData[key] !== undefined) {
                     data.append(key, formData[key]);
                 }
             });
 
-            await axios.post(`${API_URL}/promomedia`, data, {
-                headers: { 
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            if (editingId) {
+                await axios.put(`${API_URL}/promomedia/${editingId}`, data, {
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                toast.success('Media updated successfully');
+            } else {
+                await axios.post(`${API_URL}/promomedia`, data, {
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                toast.success('Media added successfully');
+            }
             
-            toast.success('Media added successfully');
             setIsModalOpen(false);
+            setEditingId(null);
             fetchMedia();
             setFormData({ type: 'image', title: '', subtitle: '', link: '', order: 0, isActive: true, mediaFile: null });
+            setSelectedProductIds([]);
+            setProductSearchTerm('');
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to add media');
+            toast.error(error.response?.data?.message || 'Failed to save media');
         }
     };
 
@@ -115,11 +145,31 @@ const PromoMediaManager = () => {
                     <div key={item._id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group">
                         <div className="aspect-video bg-slate-100 relative">
                             {item.type === 'video' ? (
-                                <video src={item.mediaUrl.startsWith('http') || item.mediaUrl.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl}`} className="w-full h-full object-cover" controls muted />
+                                <video src={item.mediaUrl?.startsWith('http') || item.mediaUrl?.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl || ''}`} className="w-full h-full object-cover" controls muted />
                             ) : (
-                                <img src={item.mediaUrl.startsWith('http') || item.mediaUrl.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl}`} alt={item.title} className="w-full h-full object-cover" />
+                                <img src={item.mediaUrl?.startsWith('http') || item.mediaUrl?.startsWith('data:') ? item.mediaUrl : `http://localhost:5000${item.mediaUrl || ''}`} alt={item.title} className="w-full h-full object-cover" />
                             )}
                             <div className="absolute top-4 right-4 flex gap-2">
+                                <button 
+                                    onClick={() => {
+                                        setFormData({
+                                            type: item.type,
+                                            title: item.title || '',
+                                            subtitle: item.subtitle || '',
+                                            link: item.link || '',
+                                            order: item.order || 0,
+                                            isActive: item.isActive,
+                                            mediaFile: null
+                                        });
+                                        const ids = parseLinkToIds(item.link);
+                                        setSelectedProductIds(ids);
+                                        setEditingId(item._id);
+                                        setIsModalOpen(true);
+                                    }}
+                                    className="p-2 bg-white/90 rounded-lg text-indigo-500 hover:bg-indigo-50"
+                                >
+                                    <Edit size={18} />
+                                </button>
                                 <button onClick={() => setDeleteConfirmId(item._id)} className="p-2 bg-white/90 rounded-lg text-red-500 hover:bg-red-50">
                                     <Trash2 size={18} />
                                 </button>
@@ -141,13 +191,13 @@ const PromoMediaManager = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
                     <div className="bg-white rounded-3xl w-full max-w-xl p-8">
-                        <h2 className="text-2xl font-black mb-6">Add New Promo Media</h2>
+                        <h2 className="text-2xl font-black mb-6">{editingId ? 'Edit Promo Media' : 'Add New Promo Media'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-1">Type</label>
                                 <select 
                                     className="w-full border-slate-200 rounded-xl p-3"
-                                    value={formData.type}
+                                    value={formData.type || 'image'}
                                     onChange={(e) => setFormData({...formData, type: e.target.value})}
                                 >
                                     <option value="image">Image</option>
@@ -156,10 +206,10 @@ const PromoMediaManager = () => {
                             </div>
                             
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Media File</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Media File {editingId && <span className="text-slate-400 font-normal">(Leave empty to keep existing)</span>}</label>
                                 <input 
                                     type="file" 
-                                    required
+                                    required={!editingId}
                                     accept={formData.type === 'video' ? 'video/*' : 'image/*'}
                                     className="w-full border border-slate-200 rounded-xl p-3"
                                     onChange={(e) => setFormData({...formData, mediaFile: e.target.files[0]})}
@@ -171,39 +221,78 @@ const PromoMediaManager = () => {
                                 <input 
                                     type="text" 
                                     className="w-full border border-slate-200 rounded-xl p-3"
-                                    value={formData.title}
+                                    value={formData.title || ''}
                                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Link to Product</label>
-                                <select 
-                                    className="w-full border border-slate-200 rounded-xl p-3"
-                                    value={formData.link ? formData.link.replace('/product/', '') : ''}
-                                    onChange={(e) => {
-                                        const selectedProduct = products.find(p => p._id === e.target.value);
-                                        if (selectedProduct) {
-                                            setFormData({
-                                                ...formData, 
-                                                link: `/product/${selectedProduct._id}`,
-                                                title: selectedProduct.name,
-                                                subtitle: `Club: ₹${selectedProduct.clubPrice || selectedProduct.price}`
-                                            });
-                                        } else {
-                                            setFormData({...formData, link: ''});
-                                        }
-                                    }}
-                                >
-                                    <option value="">-- No Product / Custom Link --</option>
-                                    {products && products.map(p => (
-                                        <option key={p._id} value={p._id}>{p.name}</option>
-                                    ))}
-                                </select>
+                            <div className="relative z-40">
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Select Products to Link</label>
+                                
+                                <input 
+                                    type="text" 
+                                    placeholder="Search products..."
+                                    className="w-full border border-slate-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                    value={productSearchTerm}
+                                    onChange={(e) => setProductSearchTerm(e.target.value)}
+                                />
+
+                                <div className="w-full border border-slate-200 rounded-xl p-3 bg-slate-50/50 max-h-60 overflow-y-auto shadow-inner">
+                                    <div className="flex flex-col gap-2">
+                                        {Array.isArray(products) && products.length > 0 ? products
+                                            .filter(p => !productSearchTerm || p.name.toLowerCase().includes(productSearchTerm.toLowerCase()))
+                                            .map((p, idx) => {
+                                            const isChecked = selectedProductIds.includes(p._id);
+                                            return (
+                                                <label 
+                                                    key={p._id || idx}
+                                                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${isChecked ? 'bg-indigo-50 border border-indigo-200 shadow-sm' : 'bg-white border border-slate-200 hover:border-indigo-300 shadow-sm'}`}
+                                                >
+                                                    <input 
+                                                        type="checkbox"
+                                                        className="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                                                        checked={isChecked}
+                                                        onChange={(e) => {
+                                                            let newIds;
+                                                            if (e.target.checked) {
+                                                                newIds = [...selectedProductIds, p._id];
+                                                            } else {
+                                                                newIds = selectedProductIds.filter(id => id !== p._id);
+                                                            }
+                                                            setSelectedProductIds(newIds);
+                                                            
+                                                            const newFormData = { ...formData, link: buildLinkFromIds(newIds) };
+                                                            if (newIds.length === 1 && !formData.title) {
+                                                                newFormData.title = p.name;
+                                                                newFormData.subtitle = `₹${p.price}`;
+                                                            }
+                                                            setFormData(newFormData);
+                                                        }}
+                                                    />
+                                                    <span className={`text-sm ${isChecked ? 'font-bold text-indigo-900' : 'font-semibold text-slate-700'}`}>{p.name}</span>
+                                                    <span className="text-xs font-bold text-slate-500 ml-auto bg-slate-100 px-2.5 py-1 rounded-md">₹{p.price}</span>
+                                                </label>
+                                            );
+                                        }) : (
+                                            <div className="text-sm text-slate-500 text-center py-4 font-medium">No products added yet.</div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="flex gap-3 pt-4">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Cancel</button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setIsModalOpen(false);
+                                        setFormData({ type: 'image', title: '', subtitle: '', link: '', order: 0, isActive: true, mediaFile: null });
+                                        setProductSearchTerm('');
+                                        setIsProductDropdownOpen(false);
+                                    }} 
+                                    className="flex-1 px-4 py-3 rounded-xl font-bold bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                >
+                                    Cancel
+                                </button>
                                 <button type="submit" className="flex-1 px-4 py-3 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700">Upload Media</button>
                             </div>
                         </form>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAPI } from '../utils/api';
 import toast from 'react-hot-toast';
+import Invoice from '../components/Invoice';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
@@ -9,6 +10,7 @@ const Orders = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('All');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [viewingInvoice, setViewingInvoice] = useState(null);
 
     useEffect(() => {
         loadOrders();
@@ -207,10 +209,13 @@ const Orders = () => {
                                                 </select>
                                             </td>
                                             <td className="py-4 px-6 text-right whitespace-nowrap">
-                                                <button className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors mr-2 inline-flex items-center justify-center group-hover:bg-white group-hover:shadow-sm" title="View Details">
+                                                <button 
+                                                    onClick={() => setViewingInvoice(order)}
+                                                    className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors mr-2 inline-flex items-center justify-center group-hover:bg-white group-hover:shadow-sm" 
+                                                    title="View Invoice"
+                                                >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                     </svg>
                                                 </button>
                                                 <button className="text-gray-500 hover:text-red-600 bg-gray-50 hover:bg-red-50 p-2 rounded-lg transition-colors inline-flex items-center justify-center group-hover:bg-white group-hover:shadow-sm" title="Delete">
@@ -257,6 +262,13 @@ const Orders = () => {
                     </div>
                 </div>
             </div>
+
+            {viewingInvoice && (
+                <Invoice 
+                    order={viewingInvoice} 
+                    onClose={() => setViewingInvoice(null)} 
+                />
+            )}
         </div>
     );
 };

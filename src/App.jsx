@@ -14,6 +14,7 @@ import Banners from './pages/Banners';
 import PromoMediaManager from './pages/PromoMediaManager';
 import Statistics from './pages/Statistics';
 import Feedbacks from './pages/Feedbacks';
+import Collections from './pages/Collections';
 import Reviews from './pages/Reviews';
 import Coupons from './pages/Coupons';
 import ShippingSettings from './pages/ShippingSettings';
@@ -58,6 +59,7 @@ function App() {
           <Route path="customers" element={<Customers />} />
           <Route path="customers/:id" element={<CustomerDetails />} />
           <Route path="categories" element={<Categories />} />
+          <Route path="collections" element={<Collections />} />
           <Route path="brands" element={<Brands />} />
           <Route path="banners" element={<Banners />} />
           <Route path="promomedia" element={<PromoMediaManager />} />
