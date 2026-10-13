@@ -7,9 +7,10 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"DM Sans"', 'sans-serif'],
-                serif: ['"Lora"', 'serif'],
-                inter: ['"DM Sans"', 'sans-serif'],
+                sans: ['"Nunito Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                serif: ['"Nunito Sans"', 'serif'],
+                inter: ['"Nunito Sans"', 'sans-serif'],
+                nunito: ['"Nunito Sans"', 'sans-serif'],
             },
         },
     },
