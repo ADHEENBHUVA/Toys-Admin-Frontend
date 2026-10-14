@@ -203,34 +203,23 @@ const COMPANY_LOGO_URL = BRAND_LOGO_BASE64 || "/brand-logo.png";
                         id="invoice-content"
                         style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
                     >
-                        {/* Background Triple Slanted Watermarks (3 var Trasu Logo and Name - Mota Akshar ma) */}
-                        <div className="absolute inset-0 pointer-events-none flex flex-col justify-between items-center z-0 overflow-hidden select-none py-8">
-                            {/* 1. Top Slanted Watermark */}
-                            <div className="opacity-[0.09] transform -rotate-[22deg] scale-125 sm:scale-135 flex items-center justify-center mt-12">
-                                <img 
-                                    src={COMPANY_LOGO_URL} 
-                                    alt="Little Joys Watermark Top" 
-                                    className="w-[450px] sm:w-[580px] max-w-[95vw] object-contain" 
-                                />
-                            </div>
-                            
-                            {/* 2. Center Slanted Watermark */}
-                            <div className="opacity-[0.10] transform -rotate-[22deg] scale-130 sm:scale-140 flex items-center justify-center my-auto">
-                                <img 
-                                    src={COMPANY_LOGO_URL} 
-                                    alt="Little Joys Watermark Middle" 
-                                    className="w-[480px] sm:w-[620px] max-w-[95vw] object-contain" 
-                                />
-                            </div>
-
-                            {/* 3. Bottom Slanted Watermark */}
-                            <div className="opacity-[0.09] transform -rotate-[22deg] scale-125 sm:scale-135 flex items-center justify-center mb-12">
-                                <img 
-                                    src={COMPANY_LOGO_URL} 
-                                    alt="Little Joys Watermark Bottom" 
-                                    className="w-[450px] sm:w-[580px] max-w-[95vw] object-contain" 
-                                />
-                            </div>
+                        {/* Background 5 Columns x 20 Rows Repeating Watermark Grid (Properly Visible Pattern) */}
+                        <div 
+                            className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none grid grid-cols-5 gap-x-3 sm:gap-x-5 gap-y-6 sm:gap-y-8 p-3 sm:p-5 content-between items-center justify-items-center"
+                            aria-hidden="true"
+                        >
+                            {Array.from({ length: 100 }).map((_, i) => (
+                                <div 
+                                    key={i} 
+                                    className="opacity-[0.11] print:opacity-[0.12] transform -rotate-[22deg] flex items-center justify-center pointer-events-none"
+                                >
+                                    <img 
+                                        src={COMPANY_LOGO_URL} 
+                                        alt="Watermark" 
+                                        className="w-28 sm:w-32 max-w-full h-auto object-contain pointer-events-none" 
+                                    />
+                                </div>
+                            ))}
                         </div>
 
                         {/* Content Container (Layered above watermark) */}
