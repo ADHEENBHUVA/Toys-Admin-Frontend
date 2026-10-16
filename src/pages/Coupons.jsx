@@ -124,10 +124,10 @@ const Coupons = () => {
     const totalPages = Math.ceil(selectedCouponUsers.length / usersPerPage);
 
     return (
-        <div className="p-6 md:p-8 lg:p-10 font-sans min-h-full bg-gray-50/50">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 font-sans min-h-full bg-gray-50/50">
             <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Coupons & Promos</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Coupons & Promos</h1>
                     <p className="text-gray-500 font-medium">Create and distribute discount codes and seasonal promos.</p>
                 </div>
                 <button 
@@ -214,17 +214,17 @@ const Coupons = () => {
                     ></div>
 
                     <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden transform transition-all border border-gray-100 flex flex-col max-h-[90vh]">
-                        <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="px-5 sm:px-8 py-5 sm:py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
-                                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">{editingId ? 'Update Coupon' : 'Create Coupon'}</h3>
-                                <p className="text-sm font-medium text-gray-500 mt-1">{editingId ? 'Modify existing discount code details.' : 'Add a new discount code for your store.'}</p>
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">{editingId ? 'Update Coupon' : 'Create Coupon'}</h3>
+                                <p className="text-xs sm:text-sm font-medium text-gray-500 mt-1">{editingId ? 'Modify existing discount code details.' : 'Add a new discount code for your store.'}</p>
                             </div>
                             <button onClick={closeModal} className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shadow-sm border border-gray-200">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
 
-                        <div className="p-8 overflow-y-auto flex-1">
+                        <div className="p-5 sm:p-8 overflow-y-auto flex-1">
                             <form id="create-coupon-form" onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-900 uppercase tracking-widest pl-1">Coupon Code</label>

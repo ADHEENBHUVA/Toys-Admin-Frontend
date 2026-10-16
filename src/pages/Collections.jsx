@@ -168,10 +168,10 @@ const Collections = () => {
     };
 
     return (
-        <div className="p-6 md:p-8 lg:p-10 font-sans min-h-full bg-gray-50/50 relative">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 font-sans min-h-full bg-gray-50/50 relative">
             <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Collections</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Collections</h1>
                     <p className="text-gray-500 font-medium">Manage your product hierarchies and catalog tagging.</p>
                 </div>
                 <button 

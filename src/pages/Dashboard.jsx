@@ -121,19 +121,19 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="p-6 md:p-8 lg:p-10 font-sans relative min-h-full">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 font-sans relative min-h-full">
             {/* Ambient Background Elements */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-indigo-200/50 via-purple-100/30 to-transparent rounded-full blur-3xl opacity-60 pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
             
             <div className="relative z-10">
                 {/* Header */}
-                <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mb-2">Dashboard Overview</h1>
-                        <p className="text-slate-500 font-medium text-lg">Welcome back, here's what's happening with your store today.</p>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-1 sm:mb-2">Dashboard Overview</h1>
+                        <p className="text-slate-500 font-medium text-sm sm:text-base md:text-lg">Welcome back, here's what's happening with your store today.</p>
                     </div>
                     <div className="flex gap-3">
-                        <Link to="/products" className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95 flex items-center gap-2">
+                        <Link to="/products" className="px-5 sm:px-6 py-2.5 sm:py-3 bg-slate-900 text-white font-bold rounded-2xl shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                             New Product
                         </Link>
@@ -173,41 +173,41 @@ const Dashboard = () => {
                 {/* Main Content Area */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Main Chart */}
-                    <div className="lg:col-span-2 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden flex flex-col min-h-[450px]">
-                        <div className="flex justify-between items-center mb-8 relative z-10">
+                    <div className="lg:col-span-2 bg-white p-5 sm:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative overflow-hidden flex flex-col min-h-[420px]">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8 relative z-10">
                             <div>
-                                <h3 className="text-2xl font-extrabold text-slate-800">Revenue Analytics</h3>
-                                <p className="text-sm font-medium text-slate-500 mt-1">Monthly performance breakdown</p>
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">Revenue Analytics</h3>
+                                <p className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5 sm:mt-1">Monthly performance breakdown</p>
                             </div>
-                            <select className="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block px-4 py-2.5 outline-none cursor-pointer transition-colors hover:bg-slate-100">
+                            <select className="bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block px-3 sm:px-4 py-2 sm:py-2.5 outline-none cursor-pointer transition-colors hover:bg-slate-100">
                                 <option>This Year</option>
                             </select>
                         </div>
 
                         {/* Animated CSS Chart */}
-                        <div className="flex-1 w-full bg-slate-50/50 rounded-2xl p-6 pb-2 flex flex-col justify-end relative mt-2 border border-slate-100">
+                        <div className="flex-1 w-full bg-slate-50/50 rounded-2xl p-4 sm:p-6 pb-2 flex flex-col justify-end relative mt-2 border border-slate-100 overflow-x-auto">
                             {/* Horizontal Grid lines */}
-                            <div className="absolute inset-0 p-6 pb-8 flex flex-col justify-between pointer-events-none">
+                            <div className="absolute inset-0 p-4 sm:p-6 pb-8 flex flex-col justify-between pointer-events-none">
                                 {[...Array(5)].map((_, i) => (
                                     <div key={i} className="w-full border-t border-slate-200 border-dashed opacity-50"></div>
                                 ))}
                             </div>
 
                             {/* Chart Bars */}
-                            <div className="w-full h-full min-h-[260px] flex items-end justify-between gap-2 sm:gap-4 z-10 pt-8 px-2">
+                            <div className="w-full min-w-[340px] h-full min-h-[240px] flex items-end justify-between gap-1.5 sm:gap-4 z-10 pt-8 px-1 sm:px-2">
                                 {data.chartData.map((val, i) => {
                                     const heightPercent = (val / maxChartValue) * 100;
                                     return (
                                         <div key={i} className="flex flex-col items-center flex-1 group/bar h-full justify-end relative">
                                             {/* Tooltip */}
-                                            <div className="absolute -top-10 bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
+                                            <div className="absolute -top-10 bg-slate-800 text-white text-[11px] sm:text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none">
                                                 {formatRupee(val)}
                                             </div>
 
                                             {/* Bar Container */}
                                             <div className="w-full h-full relative flex items-end justify-center pb-2">
                                                 <div
-                                                    className="w-full max-w-[3rem] bg-indigo-100 rounded-xl transition-all duration-500 ease-out group-hover/bar:bg-indigo-500 relative cursor-pointer"
+                                                    className="w-full max-w-[2.5rem] bg-indigo-100 rounded-xl transition-all duration-500 ease-out group-hover/bar:bg-indigo-500 relative cursor-pointer"
                                                     style={{ height: `${heightPercent}%`, minHeight: heightPercent > 0 ? '10%' : '2px' }}
                                                 >
                                                     {/* Glow effect on hover */}
@@ -215,7 +215,7 @@ const Dashboard = () => {
                                                 </div>
                                             </div>
                                             {/* Label */}
-                                            <span className="text-xs font-bold text-slate-400 shrink-0 mt-2 uppercase tracking-wider group-hover/bar:text-indigo-600 transition-colors">
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-400 shrink-0 mt-2 uppercase tracking-wider group-hover/bar:text-indigo-600 transition-colors">
                                                 {months[i]}
                                             </span>
                                         </div>
@@ -226,13 +226,13 @@ const Dashboard = () => {
                     </div>
 
                     {/* Side Sidebar - Recent Orders */}
-                    <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col min-h-[450px]">
+                    <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col min-h-[420px]">
                         <div className="flex justify-between items-center mb-6">
                             <div>
-                                <h3 className="text-2xl font-extrabold text-slate-800">Recent Sales</h3>
-                                <p className="text-sm font-medium text-slate-500 mt-1">Latest transactions</p>
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">Recent Sales</h3>
+                                <p className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5 sm:mt-1">Latest transactions</p>
                             </div>
-                            <Link to="/orders" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</Link>
+                            <Link to="/orders" className="text-xs sm:text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">View All</Link>
                         </div>
 
                         <div className="flex-1 flex flex-col gap-3 overflow-y-auto pr-2 custom-scrollbar">

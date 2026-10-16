@@ -69,10 +69,10 @@ const Customers = () => {
     };
 
     return (
-        <div className="p-6 md:p-8 lg:p-10 font-sans relative min-h-full bg-gray-50/50">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 font-sans relative min-h-full bg-gray-50/50">
             <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Customers</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Customers</h1>
                     <p className="text-gray-500 font-medium">Manage your active customers and view their history.</p>
                 </div>
                 <div className="flex gap-3 items-center">
@@ -155,7 +155,7 @@ const Customers = () => {
             {/* Add Customer Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-100 transform transition-all">
+                    <div className="bg-white rounded-3xl p-5 sm:p-8 w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-100 transform transition-all">
                         <div className="flex justify-between items-center mb-6">
                             <div>
                                 <h2 className="text-2xl font-extrabold text-gray-900">Add New Customer</h2>

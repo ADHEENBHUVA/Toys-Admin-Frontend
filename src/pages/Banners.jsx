@@ -194,7 +194,7 @@ const Banners = () => {
     if (loading) return <div className="p-8 font-bold text-gray-500">Loading Banners...</div>;
 
     return (
-        <div className="p-8 max-w-7xl mx-auto relative">
+        <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto relative">
             
             {/* Image Preview Modal */}
             {selectedImage && (
@@ -268,20 +268,20 @@ const Banners = () => {
                 </div>
             )}
 
-            <div className="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8 border-b border-gray-200 pb-4">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Hero Banners</h1>
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Hero Banners</h1>
                     <p className="text-gray-500 font-medium mt-1 mb-4">Manage the image slider on the customer homepage</p>
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-3">
                         <button 
                             onClick={() => setActiveTab('PC')}
-                            className={`px-6 py-2 rounded-full font-bold transition-all ${activeTab === 'PC' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                            className={`px-5 py-2 rounded-full font-bold text-sm transition-all ${activeTab === 'PC' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                         >
                             PC Banners
                         </button>
                         <button 
                             onClick={() => setActiveTab('Mobile')}
-                            className={`px-6 py-2 rounded-full font-bold transition-all ${activeTab === 'Mobile' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                            className={`px-5 py-2 rounded-full font-bold text-sm transition-all ${activeTab === 'Mobile' ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                         >
                             Mobile Banners
                         </button>
@@ -289,7 +289,7 @@ const Banners = () => {
                 </div>
                 <button 
                     onClick={() => { setIsAdding(true); setEditingBannerId(null); setFormData({ image: '', title: '', buttonLink: '', platform: activeTab, status: 'Active' }); }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm transition-colors mb-2"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-colors mb-2 text-sm shrink-0"
                 >
                     + Add New Banner
                 </button>
@@ -298,7 +298,7 @@ const Banners = () => {
             {/* Add Banner Modal Popup */}
             {isAdding && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-lg relative border border-gray-100">
+                    <div className="bg-white p-5 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg relative border border-gray-100 max-h-[90vh] overflow-y-auto">
                         <button 
                             onClick={() => setIsAdding(false)}
                             className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors"

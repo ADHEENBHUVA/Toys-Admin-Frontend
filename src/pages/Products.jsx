@@ -280,18 +280,18 @@ const Products = () => {
     const currentTableData = filteredProducts.slice(startIndex, endIndex);
 
     return (
-        <div className="p-6 md:p-8 lg:p-10 font-sans relative min-h-full">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-10 font-sans relative min-h-full">
             {/* Header Area */}
             <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Products</h1>
-                    <p className="text-gray-500 font-medium">Manage your toy catalog, pricing, and live inventory.</p>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Products</h1>
+                    <p className="text-gray-500 font-medium text-sm sm:text-base">Manage your toy catalog, pricing, and live inventory.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <div className="relative">
                         <button 
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl shadow-sm hover:shadow-md hover:border-gray-300 transition-all active:scale-95 flex items-center gap-2"
+                            className="px-4 sm:px-5 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm sm:text-base font-bold rounded-xl shadow-sm hover:shadow-md hover:border-gray-300 transition-all active:scale-95 flex items-center gap-2"
                         >
                             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                             Filter {filterCategory !== 'All' && <span className="bg-indigo-100 text-indigo-700 text-xs py-0.5 px-2 rounded-full font-semibold">{filterCategory}</span>}
@@ -330,7 +330,7 @@ const Products = () => {
             {/* Main Content Card */}
             <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden">
                 {/* Search Bar */}
-                <div className="p-6 border-b border-gray-100 bg-white/50">
+                <div className="p-4 sm:p-6 border-b border-gray-100 bg-white/50">
                     <div className="relative max-w-md">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -500,21 +500,21 @@ const Products = () => {
                     {/* Modal Content */}
                     <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden transform transition-all border border-gray-100 flex flex-col max-h-[90vh]">
                         {/* Modal Header */}
-                        <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
-                                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">{editingId ? 'Edit Product' : 'Add New Product'}</h3>
-                                <p className="text-sm font-medium text-gray-500 mt-1">Fill in the details to {editingId ? 'update this toy in' : 'publish a new toy to'} your catalog.</p>
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">{editingId ? 'Edit Product' : 'Add New Product'}</h3>
+                                <p className="text-xs sm:text-sm font-medium text-gray-500 mt-1">Fill in the details to {editingId ? 'update this toy in' : 'publish a new toy to'} your catalog.</p>
                             </div>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shadow-sm border border-gray-200"
+                                className="w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shadow-sm border border-gray-200 shrink-0 ml-2"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
 
                         {/* Modal Body */}
-                        <div className="p-8 overflow-y-auto flex-1">
+                        <div className="p-4 sm:p-8 overflow-y-auto flex-1">
                             <form id="add-product-form" onSubmit={handleSubmit} className="space-y-6">
 
                                 {/* Image Upload Component */}

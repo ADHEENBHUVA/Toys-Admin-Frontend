@@ -199,7 +199,7 @@ const COMPANY_LOGO_URL = BRAND_LOGO_BASE64 || "/brand-logo.png";
 
                     {/* Exact Styled Printable Document */}
                     <div 
-                        className="relative overflow-hidden bg-white p-8 sm:p-12 text-[#1c274c] font-sans print:p-0 print:m-0 selection:bg-blue-100" 
+                        className="relative overflow-hidden bg-white p-4 sm:p-12 text-[#1c274c] font-sans print:p-0 print:m-0 selection:bg-blue-100" 
                         id="invoice-content"
                         style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
                     >
@@ -333,8 +333,8 @@ const COMPANY_LOGO_URL = BRAND_LOGO_BASE64 || "/brand-logo.png";
                         </div>
 
                         {/* 4. Line Items Table */}
-                        <div className="border border-slate-300 rounded-lg overflow-hidden mb-6">
-                            <table className="w-full text-xs text-left border-collapse">
+                        <div className="border border-slate-300 rounded-lg overflow-x-auto mb-6">
+                            <table className="w-full min-w-[500px] text-xs text-left border-collapse">
                                 <thead>
                                     <tr className="bg-[#1c274c] text-white font-bold text-center">
                                         <th className="py-3 px-3 w-12 border-r border-slate-600">No.</th>

@@ -5,6 +5,7 @@ const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const dropdownRef = useRef(null);
     const [adminProfile, setAdminProfile] = useState({
         firstName: 'Admin',
@@ -15,23 +16,32 @@ const AdminLayout = () => {
 
     const routeTitles = {
         '/': 'Overview',
-        '/products': 'Products',
-        '/orders': 'Orders',
+        '/products': 'Products Catalog',
+        '/orders': 'Orders Management',
         '/customers': 'Customers',
         '/categories': 'Categories',
+        '/collections': 'Collections',
         '/brands': 'Brands',
-        '/statistics': 'Statistics',
-        '/feedbacks': 'Feedbacks',
-        '/reviews': 'Reviews',
-        '/coupons': 'Coupons',
+        '/banners': 'Hero Banners',
+        '/promomedia': 'Promo Media Manager',
+        '/statistics': 'Statistics & Analytics',
+        '/feedbacks': 'Customer Feedbacks',
+        '/reviews': 'Product Reviews',
+        '/testimonials': 'Testimonials',
+        '/coupons': 'Coupons & Promos',
         '/shipping': 'Shipping Settings',
+        '/subscribers': 'Newsletter Subscribers',
         '/social': 'Social Settings',
         '/discount-settings': 'Discount Settings',
-
         '/profile': 'My Profile'
     };
 
-    const currentTitle = routeTitles[location.pathname] || 'Dashboard';
+    const getHeaderTitle = () => {
+        if (location.pathname.startsWith('/customers/')) return 'Customer Profile';
+        return routeTitles[location.pathname] || 'Dashboard';
+    };
+
+    const currentTitle = getHeaderTitle();
 
     useEffect(() => {
         const loginTimestamp = localStorage.getItem('adminLoginTimestamp');
@@ -99,6 +109,10 @@ const AdminLayout = () => {
         };
     }, [navigate, location.pathname]);
 
+    useEffect(() => {
+        setIsMobileSidebarOpen(false);
+    }, [location.pathname]);
+
     const handleLogout = () => {
         localStorage.removeItem('adminLoginTimestamp');
         navigate('/login');
@@ -106,19 +120,37 @@ const AdminLayout = () => {
 
     return (
         <div className="flex h-screen bg-[#f4f7f9] font-sans overflow-hidden">
+            {/* Mobile Backdrop */}
+            {isMobileSidebarOpen && (
+                <div 
+                    onClick={() => setIsMobileSidebarOpen(false)} 
+                    className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden transition-opacity" 
+                />
+            )}
+
             {/* Sidebar (Clean & Premium) */}
-            <div className="w-[280px] bg-white flex flex-col hidden md:flex relative z-20 border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+            <div className={`fixed inset-y-0 left-0 z-50 w-[280px] bg-white flex flex-col border-r border-gray-100 shadow-[4px_0_24px_rgba(0,0,0,0.06)] transition-transform duration-300 md:static md:translate-x-0 ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 {/* Logo Area */}
-                <div className="h-[64px] px-8 flex items-center gap-4 border-b border-gray-100">
-                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 overflow-hidden relative group">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <span className="text-white font-black text-xl relative z-10">T</span>
+                <div className="h-[64px] px-6 md:px-8 flex items-center justify-between border-b border-gray-100">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20 overflow-hidden relative group">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <span className="text-white font-black text-xl relative z-10">T</span>
+                        </div>
+                        <span className="text-2xl font-extrabold tracking-tight text-gray-900">Toys<span className="text-indigo-600">.</span></span>
                     </div>
-                    <span className="text-2xl font-extrabold tracking-tight text-gray-900">Toys<span className="text-indigo-600">.</span></span>
+                    {/* Close button for mobile */}
+                    <button 
+                        onClick={() => setIsMobileSidebarOpen(false)}
+                        className="md:hidden w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                        aria-label="Close navigation"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-4 pt-6 pb-20 space-y-1 overflow-y-auto custom-scrollbar">
+                <nav onClick={() => setIsMobileSidebarOpen(false)} className="flex-1 px-4 pt-6 pb-20 space-y-1 overflow-y-auto custom-scrollbar">
                     <div className="px-4 mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">Main Menu</div>
 
                     <NavLink to="/" className={({ isActive }) => `flex items-center gap-4 px-4 py-2.5 rounded-2xl font-bold transition-all relative overflow-hidden group ${isActive ? 'bg-indigo-50/50 text-indigo-700' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
@@ -353,19 +385,23 @@ const AdminLayout = () => {
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col overflow-hidden relative">
-                {/* Top Header - Glassmorphic */}
-                <header className="h-[64px] bg-white/60 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-6 lg:px-10 z-30 sticky top-0 border-white/50 shadow-sm">
-                    <div className="flex items-center gap-4">
-                        <button className="md:hidden w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                {/* Top Header - Static */}
+                <header className="h-[64px] bg-white border-b border-gray-200 flex items-center justify-between px-3 sm:px-6 lg:px-10 z-30 relative shadow-2xs">
+                    <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                        <button 
+                            onClick={() => setIsMobileSidebarOpen(true)}
+                            aria-label="Open sidebar menu"
+                            className="md:hidden w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors shrink-0"
+                        >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
-                        <div className="hidden sm:block">
-                            <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{currentTitle}</h2>
-                            <p className="text-sm font-medium text-gray-500 mt-0.5">Manage your store effectively.</p>
+                        <div className="min-w-0">
+                            <h2 className="text-base sm:text-2xl font-extrabold text-gray-900 tracking-tight truncate">{currentTitle}</h2>
+                            <p className="hidden sm:block text-xs sm:text-sm font-medium text-gray-500 mt-0.5">Manage your store effectively.</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4 md:gap-6">
+                    <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
                         {/* Search Bar */}
                         <div className="hidden md:flex relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -379,19 +415,19 @@ const AdminLayout = () => {
                         </div>
 
                         {/* Notifications */}
-                        <button className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all relative">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        <button className="w-9 h-9 sm:w-10 sm:h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all relative">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                            <span className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                         </button>
 
                         {/* Profile */}
                         <div className="relative" ref={dropdownRef}>
                             <div 
                                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                className="flex items-center gap-3 pl-4 md:pl-6 border-l border-gray-200 cursor-pointer"
+                                className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 md:pl-6 border-l border-gray-200 cursor-pointer"
                             >
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px] hover:shadow-lg hover:shadow-indigo-500/30 transition-shadow">
-                                    <div className="w-full h-full bg-white rounded-[10px] overflow-hidden border border-white flex items-center justify-center font-bold text-indigo-600 bg-slate-50">
+                                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[2px] hover:shadow-lg hover:shadow-indigo-500/30 transition-shadow">
+                                    <div className="w-full h-full bg-white rounded-[10px] overflow-hidden border border-white flex items-center justify-center font-bold text-indigo-600 bg-slate-50 text-xs sm:text-sm">
                                         {adminProfile.profileImage ? (
                                             <img src={adminProfile.profileImage} alt="Admin" className="w-full h-full object-cover" />
                                         ) : (
